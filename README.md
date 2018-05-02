@@ -3,54 +3,7 @@
 
 如果你使用过 Redux 开发 React，你一定听过 容器组件（Smart/Container Components） 或 展示组件（Dumb/Presentational Components），这样划分有什么样的好处，我们能否能借鉴这种划分方式来编写 Vue 代码呢，今天我会演示为什么我们应该采取这种模式，以及如何在 Vue 中编写这两种组件。
 
-## Table Of Contents
-
-<!-- TOC -->
-
-- [致敬 React: 为 Vue 引入容器组件和展示组件](#致敬-react-为-vue-引入容器组件和展示组件)
-    - [Table Of Contents](#table-of-contents)
-    - [为什么要使用容器组件?](#为什么要使用容器组件)
-        - [components/CommentList.vue](#componentscommentlistvue)
-        - [store/index.js](#storeindexjs)
-    - [什么是容器组件](#什么是容器组件)
-    - [容器组件 和 展示组件 的区别](#容器组件-和-展示组件-的区别)
-    - [用 容器组件/展示组件 模式改造上面的例子](#用-容器组件展示组件-模式改造上面的例子)
-        - [概要设计](#概要设计)
-            - [展示组件](#展示组件)
-            - [容器组件](#容器组件)
-        - [编码实现](#编码实现)
-        - [components/CommentListNew.vue](#componentscommentlistnewvue)
-        - [containers/CommentListContainer.vue](#containerscommentlistcontainervue)
-    - [使用 @xunlei/vuex-connector 实现容器组件](#使用-xunleivuex-connector-实现容器组件)
-        - [手动实现容器组件存在的不足](#手动实现容器组件存在的不足)
-            - [代码比较繁琐](#代码比较繁琐)
-            - [无法透传其他 props 给展示组件](#无法透传其他-props-给展示组件)
-            - [容器组件无法统一进行优化](#容器组件无法统一进行优化)
-            - [无法控制展示组件不去获取 store](#无法控制展示组件不去获取-store)
-        - [使用 @xunlei/vuex-connector](#使用-xunleivuex-connector)
-            - [代码非常简洁](#代码非常简洁)
-                - [comonents/ConnectCommentListContainer.vue](#comonentsconnectcommentlistcontainervue)
-                - [问题来了，connector 是什么？](#问题来了connector-是什么)
-            - [支持透传其他 props 给展示组件](#支持透传其他-props-给展示组件)
-            - [统一封装方便后续统一优化](#统一封装方便后续统一优化)
-            - [可以控制展示组件无法直接与 store 通信](#可以控制展示组件无法直接与-store-通信)
-    - [引入容器组件/展示组件模式带来的好处](#引入容器组件展示组件模式带来的好处)
-        - [可复用性](#可复用性)
-        - [健壮性](#健壮性)
-            - [Vue 组件 props 验证](#vue-组件-props-验证)
-            - [TypeScript 类型系统](#typescript-类型系统)
-        - [可测试性](#可测试性)
-    - [引入容器组件/展示组件模式带来的限制](#引入容器组件展示组件模式带来的限制)
-        - [学习和开发成本](#学习和开发成本)
-    - [延伸阅读](#延伸阅读)
-    - [代码示例](#代码示例)
-        - [Vue Vuex 容器-展示组件模式 Demo](#vue-vuex-容器-展示组件模式-demo)
-            - [Demo 在线地址:](#demo-在线地址)
-            - [Demo 源码：](#demo-源码)
-        - [@xunlei/vuex-connector](#xunleivuex-connector)
-            - [源码](#源码)
-
-<!-- /TOC -->
+![为 Vue 引入容器组件和展示组件](https://upload-images.jianshu.io/upload_images/64173-406aa016d0ae7df9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ## 为什么要使用容器组件?
 
