@@ -44,6 +44,11 @@
         - [学习和开发成本](#学习和开发成本)
     - [延伸阅读](#延伸阅读)
     - [代码示例](#代码示例)
+        - [Vue Vuex 容器-展示组件模式 Demo](#vue-vuex-容器-展示组件模式-demo)
+            - [Demo 在线地址:](#demo-在线地址)
+            - [Demo 源码：](#demo-源码)
+        - [@xunlei/vuex-connector](#xunleivuex-connector)
+            - [源码](#源码)
 
 <!-- /TOC -->
 
@@ -122,7 +127,7 @@ const store = new Vuex.Store({
 export default store;
 ```
 
-这样写看起来理所当然，有没有可以什么问题，或者可以优化的地方呢？
+这样写看起来理所当然，有没有什么问题，或者可以优化的地方呢？
 
 有一个很显而易见的问题，由于 CommentList.vue 与 项目的 Vuex store 产生了耦合，导致脱离当前的项目很难复用。
 
@@ -477,11 +482,23 @@ export default class Hello extends Vue {
 
 ## 代码示例
 
-@xunlei/vuex-connector npm 包
 
+### Vue Vuex 容器-展示组件模式 Demo
 
+#### Demo 在线地址:
 
-Vue Vuex 容器-展示组件模式demo
+[https://xunleif2e.github.io/vue-vuex-container-component/dist/](https://xunleif2e.github.io/vue-vuex-container-component/dist/)
+
+#### Demo 源码：
 [https://github.com/xunleif2e/vue-vuex-container-component](https://github.com/xunleif2e/vue-vuex-container-component)
 
+### @xunlei/vuex-connector
+
+基于 Vue 生态实现的Vuex store Connector
+
+#### 源码
+
+https://github.com/xunleif2e/vuex-connector
+
+欢迎 Star
 
