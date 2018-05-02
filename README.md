@@ -7,42 +7,43 @@
 
 <!-- TOC -->
 
-- [Table Of Contents](#table-of-contents)
-- [为什么要使用容器组件?](#为什么要使用容器组件)
-    - [components/CommentList.vue](#componentscommentlistvue)
-    - [store/index.js](#storeindexjs)
-- [什么是容器组件](#什么是容器组件)
-- [容器组件 和 展示组件 的区别](#容器组件-和-展示组件-的区别)
-- [用 容器组件/展示组件 模式改造上面的例子](#用-容器组件展示组件-模式改造上面的例子)
-    - [概要设计](#概要设计)
-        - [展示组件](#展示组件)
-        - [容器组件](#容器组件)
-    - [编码实现](#编码实现)
-    - [components/CommentListNew.vue](#componentscommentlistnewvue)
-    - [containers/CommentListContainer.vue](#containerscommentlistcontainervue)
-- [使用 @xunlei/vuex-connector 实现容器组件](#使用-xunleivuex-connector-实现容器组件)
-    - [手动实现容器组件存在的不足](#手动实现容器组件存在的不足)
-        - [代码比较繁琐](#代码比较繁琐)
-        - [无法透传其他 props 给展示组件](#无法透传其他-props-给展示组件)
-        - [容器组件无法统一进行优化](#容器组件无法统一进行优化)
-        - [无法控制展示组件不去获取 store](#无法控制展示组件不去获取-store)
-    - [使用 @xunlei/vuex-connector](#使用-xunleivuex-connector)
-        - [代码非常简洁](#代码非常简洁)
-            - [comonents/ConnectCommentListContainer.vue](#comonentsconnectcommentlistcontainervue)
-            - [问题来了，connector 是什么？](#问题来了connector-是什么)
-        - [支持透传其他 props 给展示组件](#支持透传其他-props-给展示组件)
-        - [统一封装方便后续统一优化](#统一封装方便后续统一优化)
-        - [可以控制展示组件无法直接与 store 通信](#可以控制展示组件无法直接与-store-通信)
-- [引入容器组件/展示组件模式带来的好处](#引入容器组件展示组件模式带来的好处)
-    - [可复用性](#可复用性)
-    - [健壮性](#健壮性)
-        - [Vue 组件 props 验证](#vue-组件-props-验证)
-        - [TypeScript 类型系统](#typescript-类型系统)
-    - [可测试性](#可测试性)
-- [引入容器组件/展示组件模式带来的限制](#引入容器组件展示组件模式带来的限制)
-    - [学习和开发成本](#学习和开发成本)
-- [延伸阅读](#延伸阅读)
-- [代码示例](#代码示例)
+- [致敬 React: 为 Vue 引入容器组件和展示组件](#致敬-react-为-vue-引入容器组件和展示组件)
+    - [Table Of Contents](#table-of-contents)
+    - [为什么要使用容器组件?](#为什么要使用容器组件)
+        - [components/CommentList.vue](#componentscommentlistvue)
+        - [store/index.js](#storeindexjs)
+    - [什么是容器组件](#什么是容器组件)
+    - [容器组件 和 展示组件 的区别](#容器组件-和-展示组件-的区别)
+    - [用 容器组件/展示组件 模式改造上面的例子](#用-容器组件展示组件-模式改造上面的例子)
+        - [概要设计](#概要设计)
+            - [展示组件](#展示组件)
+            - [容器组件](#容器组件)
+        - [编码实现](#编码实现)
+        - [components/CommentListNew.vue](#componentscommentlistnewvue)
+        - [containers/CommentListContainer.vue](#containerscommentlistcontainervue)
+    - [使用 @xunlei/vuex-connector 实现容器组件](#使用-xunleivuex-connector-实现容器组件)
+        - [手动实现容器组件存在的不足](#手动实现容器组件存在的不足)
+            - [代码比较繁琐](#代码比较繁琐)
+            - [无法透传其他 props 给展示组件](#无法透传其他-props-给展示组件)
+            - [容器组件无法统一进行优化](#容器组件无法统一进行优化)
+            - [无法控制展示组件不去获取 store](#无法控制展示组件不去获取-store)
+        - [使用 @xunlei/vuex-connector](#使用-xunleivuex-connector)
+            - [代码非常简洁](#代码非常简洁)
+                - [comonents/ConnectCommentListContainer.vue](#comonentsconnectcommentlistcontainervue)
+                - [问题来了，connector 是什么？](#问题来了connector-是什么)
+            - [支持透传其他 props 给展示组件](#支持透传其他-props-给展示组件)
+            - [统一封装方便后续统一优化](#统一封装方便后续统一优化)
+            - [可以控制展示组件无法直接与 store 通信](#可以控制展示组件无法直接与-store-通信)
+    - [引入容器组件/展示组件模式带来的好处](#引入容器组件展示组件模式带来的好处)
+        - [可复用性](#可复用性)
+        - [健壮性](#健壮性)
+            - [Vue 组件 props 验证](#vue-组件-props-验证)
+            - [TypeScript 类型系统](#typescript-类型系统)
+        - [可测试性](#可测试性)
+    - [引入容器组件/展示组件模式带来的限制](#引入容器组件展示组件模式带来的限制)
+        - [学习和开发成本](#学习和开发成本)
+    - [延伸阅读](#延伸阅读)
+    - [代码示例](#代码示例)
 
 <!-- /TOC -->
 
@@ -131,7 +132,7 @@ export default store;
 
 在 React.js Conf 2015 ，有一个 [Making your app fast with high-performance components](https://www.youtube.com/watch?v=KYzlpRvWZ6c&t=1351) 的主题介绍了容器组件。
 
-![什么是容器组件](https://upload-images.jianshu.io/upload_images/64173-ccc810bbb968078e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![什么是容器组件](https://user-gold-cdn.xitu.io/2018/5/2/1631f58b1bb103cc?w=1046&h=544&f=png&s=287842)
 
 容器组件专门负责和 store 通信，把数据通过 props 传递给普通的展示组件，展示组件如果想发起数据的更新，也是通过容器组件通过 props 传递的回调函数来告诉 store。
 
@@ -146,7 +147,7 @@ export default store;
 | 数据来源       | props                      | 监听 store state                   |
 | 数据修改       | 从 props 调用回调函数      | 向 store 派发 actions              |
 
-> 来自 Redux 文档 https://cn.redux.js.org/docs/basics/UsageWithReact.html
+> 来自 Redux 文档 https://user-gold-cdn.xitu.io/2018/5/2/1631f590aa5512b7
 
 ## 用 容器组件/展示组件 模式改造上面的例子
 
@@ -304,7 +305,7 @@ export default {
 
 @xunlei/vuex-connector 借鉴了 react redux 的 connect 方法，在 vuex 基础上进行的开发。
 
-有以下几个特点
+有以下几个特点：
 
 #### 代码非常简洁
 
@@ -466,12 +467,21 @@ export default class Hello extends Vue {
 
 另外，在展示组件内对 props 的声明也会带来少量的工作。
 
-总体来说，引入容器组件/展示组件模式投入产出比还是比较值得的。
+**总体来说，引入容器组件/展示组件模式投入产出比还是比较值得的。**
 
 
 ## 延伸阅读
 
-- Redux 文档 https://cn.redux.js.org/docs/basics/UsageWithReact.html
-- Making your app fast with high-performance components https://www.youtube.com/watch?v=KYzlpRvWZ6c&t=1351
+- Redux 文档 [https://user-gold-cdn.xitu.io/2018/5/2/1631f590aa5512b7](https://user-gold-cdn.xitu.io/2018/5/2/1631f590aa5512b7)
+- Making your app fast with high-performance components [https://www.youtube.com/watch?v=KYzlpRvWZ6c&t=1351](https://www.youtube.com/watch?v=KYzlpRvWZ6c&t=1351)
 
 ## 代码示例
+
+@xunlei/vuex-connector npm 包
+
+
+
+Vue Vuex 容器-展示组件模式demo
+[https://github.com/xunleif2e/vue-vuex-container-component](https://github.com/xunleif2e/vue-vuex-container-component)
+
+
