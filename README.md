@@ -1,10 +1,9 @@
 
 # 致敬 React: 为 Vue 引入容器组件和展示组件
 
-![为 Vue 引入容器组件和展示组件](https://upload-images.jianshu.io/upload_images/64173-406aa016d0ae7df9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![为 Vue 引入容器组件和展示组件](https://user-gold-cdn.xitu.io/2018/5/2/16320adcd8356508?w=900&h=500&f=png&s=538678)
 
-
-如果你使用过 Redux 开发 React，你一定听过 容器组件（Smart/Container Components） 或 展示组件（Dumb/Presentational Components），这样划分有什么样的好处，我们能否能借鉴这种划分方式来编写 Vue 代码呢，今天我会演示为什么我们应该采取这种模式，以及如何在 Vue 中编写这两种组件。
+如果你使用过 Redux 开发 React，你一定听过 容器组件（Smart/Container Components） 或 展示组件（Dumb/Presentational Components），这样划分有什么样的好处，我们能否能借鉴这种划分方式来编写 Vue 代码呢？这篇文章会演示为什么我们应该采取这种模式，以及如何在 Vue 中编写这两种组件。
 
 ## 为什么要使用容器组件?
 
@@ -450,9 +449,9 @@ export default class Hello extends Vue {
 
 基于 Vue 生态实现的Vuex store Connector
 
-#### 源码
+####  @xunlei/vuex-connector 源码:
 
-https://github.com/xunleif2e/vuex-connector
+[https://github.com/xunleif2e/vuex-connector](https://github.com/xunleif2e/vuex-connector)
 
 欢迎 Star
 
