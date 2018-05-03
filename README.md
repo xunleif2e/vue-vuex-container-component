@@ -1,8 +1,3 @@
-
-# 致敬 React: 为 Vue 引入容器组件和展示组件
-
-![为 Vue 引入容器组件和展示组件](https://user-gold-cdn.xitu.io/2018/5/2/16320adcd8356508?w=900&h=500&f=png&s=538678)
-
 如果你使用过 Redux 开发 React，你一定听过 容器组件（Smart/Container Components） 或 展示组件（Dumb/Presentational Components），这样划分有什么样的好处，我们能否能借鉴这种划分方式来编写 Vue 代码呢？这篇文章会演示为什么我们应该采取这种模式，以及如何在 Vue 中编写这两种组件。
 
 ## 为什么要使用容器组件?
@@ -11,74 +6,12 @@
 
 ### components/CommentList.vue
 
-```html
-<template>
-  <ul>
-    <li v-for="comment in comments"
-      :key="comment.id"
-    >
-      {{comment.body}}—{{comment.author}}
-    </li>
-  </ul>
-</template>
+![为 Vue 引入容器组件和展示组件](https://user-gold-cdn.xitu.io/2018/5/3/16324780ec111ec2?w=908&h=1242&f=png&s=127729)
 
-<script>
-export default {
-  name: 'CommentList',
-
-  computed: {
-    comments () {
-      return this.$store.state.comments
-    }
-  },
-
-  mounted () {
-    this.$store.dispatch('fetchComments')
-  }
-}
-</script>
-```
 
 ### store/index.js
 
-```js
-import Vue from 'vue';
-import Vuex from 'vuex';
-
-Vue.use(Vuex);
-
-const store = new Vuex.Store({
-  state: {
-    comments: [],
-  },
-
-  mutations: {
-    setComments(state, comments) {
-      state.comments = comments;
-    },
-  },
-
-  actions: {
-    fetchComments({commit}) {
-      setTimeout(() => {
-        commit('setComments', [
-          {
-            body: '霸气侧漏',
-            author: '雷叔',
-            id: 1123,
-          },
-          {
-            body: '机智如我',
-            author: '蕾妹',
-            id: 1124,
-          },
-        ]);
-      });
-    },
-  },
-});
-export default store;
-```
+![为 Vue 引入容器组件和展示组件](https://user-gold-cdn.xitu.io/2018/5/3/163247803968782d?w=788&h=1602&f=png&s=156436)
 
 这样写看起来理所当然，有没有什么问题，或者可以优化的地方呢？
 
@@ -139,49 +72,10 @@ comments、fetch 等这些 props 并不关心背后是否是由 Vuex 提供的�
 
 这个文件不再依赖 store，改为从 props 传递。
 
-值得注意到是 comments 和 fetch 分别定义了 type 、default 和 validator，用以定义和验证 props。
+值得注意的是 comments 和 fetch 分别定义了 type 、default 和 validator，用以定义和验证 props。
 
-```html
-<template>
-  <ul>
-    <li v-for="comment in comments"
-      :key="comment.id"
-    >
-      {{comment.body}}—{{comment.author}}
-    </li>
-  </ul>
-</template>
+![为 Vue 引入容器组件和展示组件](https://user-gold-cdn.xitu.io/2018/5/3/163247803c0c257b?w=908&h=1746&f=png&s=173611)
 
-<script>
-export default {
-  name: 'CommentListNew',
-
-  props: {
-    comments: {
-      type: Array,
-      default () {
-        return []
-      },
-      validator (comments) {
-        return comments.every(comment =>
-          'body' in comment &&
-          'author' in comment &&
-          'id' in comment
-        )
-      }
-    },
-    fetch: {
-      type: Function,
-      default: () => {}
-    }
-  },
-
-  mounted () {
-    this.fetch()
-  }
-}
-</script>
-```
 
 ### containers/CommentListContainer.vue
 
@@ -190,38 +84,8 @@ export default {
 * 通过 computed 来获取到状态更新，传递给展示组件
 * 通过 methods 定义回调函数，回调函数内部调用 store 的 dispatch 方法，传递给展示组件
 
-```html
-<template>
-  <CommentList
-    :comments="comments"
-    :fetch="fetchComments"
-  ></CommentList>
-</template>
+![为 Vue 引入容器组件和展示组件](https://user-gold-cdn.xitu.io/2018/5/3/16324781498ee9e1?w=1108&h=1458&f=png&s=157338)
 
-<script>
-import CommentList from '@/components/CommentListNew'
-
-export default {
-  name: 'CommentListContainer',
-
-  components: {
-    CommentList
-  },
-
-  computed: {
-    comments () {
-      return this.$store.state.comments
-    }
-  },
-
-  methods: {
-    fetchComments () {
-      return this.$store.dispatch('fetchComments')
-    }
-  }
-}
-</script>
-```
 
 ## 使用 @xunlei/vuex-connector 实现容器组件
 
@@ -231,25 +95,19 @@ export default {
 
 #### 代码比较繁琐
 
-在上面的例子中，每次传递一个 state 都要定义一个 computed，每传递一个 mutation 或者 action 都需要定一个方法，而且还要注意这个方法的参数要透传过去，同时还要处理返回值，比如异步的 action 需要返回 promise 的时候，定义的这个 method 也得把 action 的返回值返回出去。
+在上面的例子中，每次传递一个 state 都要定义一个 computed，每传递一个 mutation 或者 action 都需要定义一个方法，而且还要注意这个方法的参数要透传过去，同时还要处理返回值，比如异步的 action 需要返回 promise 的时候，定义的这个 method 也得把 action 的返回值返回出去。
 
 #### 无法透传其他 props 给展示组件
 
 比如展示组件新增了一个 prop 叫做 type，可以传递一个评论的类型，用来区分是热门还是最新，如果用上面的容器实现方式，首先需要在容器组件这层新增一个 prop 叫做 type 接受外部传来的参数，然后在展示组件内部同样定义一个 叫做 type 的 prop，然后才能传递下去。
 
-需要透传的 prop 必须定义两遍，增加了维护的成本。
+需要透传的 props 必须定义两遍，增加了维护的成本。
 
-```html
-<CommentListContainer type="热门"></CommentListContainer>
-```
+![为 Vue 引入容器组件和展示组件](https://user-gold-cdn.xitu.io/2018/5/3/16324780438319fe?w=1164&h=378&f=png&s=44205)
 
-```html
-  <CommentList
-    :fetch="fetchComments"
-    :comments="comments"
-    :type="type"
-  ></CommentList>
-```
+
+![为 Vue 引入容器组件和展示组件](https://user-gold-cdn.xitu.io/2018/5/3/16324780456150a6?w=620&h=522&f=png&s=51905)
+
 
 #### 容器组件无法统一进行优化
 
@@ -271,21 +129,8 @@ export default {
 
 ##### comonents/ConnectCommentListContainer.vue
 
-```html
-<script>
-import CommentListNew from '@/components/CommentListNew'
-import { connector } from '@/store'
+![为 Vue 引入容器组件和展示组件](https://user-gold-cdn.xitu.io/2018/5/3/163247808324e70a?w=1160&h=810&f=png&s=113201)
 
-export default connector.connect({
-  mapStateToProps: {
-    comments: (state) => state.comments
-  },
-  mapActionToProps: {
-    fetch: 'fetchComments'
-  }
-})(CommentListNew)
-</script>
-```
 
 通过 connector 的 connnect 方法，传入要映射的配置，支持 mapStateToProps, mapGettersToProps, mapDispatchToProps, mapCommitToProps 这四种，每一种都是只要配置一个简单的 map 函数，或者字符串即可。
 
@@ -295,21 +140,8 @@ export default connector.connect({
 
 connector 实际上是一个能获取到 store 实例的连接器，可以在初始化 vuex store 的时候进行初始化。
 
-```js
-import Vue from 'vue';
-import Vuex from 'vuex';
-import VuexConnector from '@xunlei/vuex-connector';
+![为 Vue 引入容器组件和展示组件](https://user-gold-cdn.xitu.io/2018/5/3/163247808e649e22?w=1076&h=810&f=png&s=103235)
 
-Vue.use(Vuex);
-
-const store = new Vuex.Store({
-  // your store
-});
-
-export const connector = new VuexConnector(store);
-
-export default store;
-```
 
 一个 Vue 程序实际上只需要初始化一次即可。
 
@@ -340,18 +172,8 @@ VuexConnector 不依赖 this.$store，而是依赖初始化传入的 store 实�
 
 比如，之前我们是通过下面的方式进行初始化：
 
-```js
-import Vue from 'vue';
-import App from './App';
-import store from './store';
+![为 Vue 引入容器组件和展示组件](https://user-gold-cdn.xitu.io/2018/5/3/163247809052ecea?w=688&h=702&f=png&s=73496)
 
-new Vue({
-  el: '#app',
-  components: {App},
-  template: '<App/>',
-  store,
-});
-```
 
 使用了 VuexConnector 之后，在最初 new Vue 的时候就不需要也最好不要传递 store 了，这样就避免了 this.$store 泛滥导致代码耦合的问题。
 
@@ -364,13 +186,13 @@ new Vue({
 
 ### 健壮性
 
-由于展示组件和容器组件是通过 prop 这种接口来连接，可以利用 props 的校验来增强代码的可靠性，混合的组件就没有这种好处。
+由于展示组件和容器组件是通过 props 这种接口来连接，可以利用 props 的校验来增强代码的可靠性，混合的组件就没有这种好处。
 
 另外对 props 的校验可以采取一下几种方式：
 
 #### Vue 组件 props 验证
 
-可以验证prop的类型，默认可以校验是否是以下类型：
+可以验证 props 的类型，默认可以校验是否是以下类型：
 
 - String
 - Number
@@ -380,39 +202,28 @@ new Vue({
 - Array
 - Symbol
 
-如果你的prop是类的一个实例，type 也可以是一个自定义构造器函数，使用 instanceof 检测。
+如果你的 props 是类的一个实例，type 也可以是一个自定义构造器函数，使用 instanceof 检测。
 
 如果还是不满足需求，可以自定义验证函数：
 
-```js
-// 自定义验证函数
-propF: {
-  validator: function (value) {
-    return value > 10
-  }
-}
-```
+![为 Vue 引入容器组件和展示组件](https://user-gold-cdn.xitu.io/2018/5/3/16324780c39e44ec?w=740&h=558&f=png&s=51562)
+
 
 #### TypeScript 类型系统
 
 
-Vue 组件 props 验证对于对象或者其他复杂的类型校验还是不太友好，所以很多人也推荐大家的prop尽量采取简单类型，不过如果你有在用 TypeScript 开发 Vue 应用，可以利用 TypeScript 静态类型检查来声明你的props。
+Vue 组件 props 验证对于对象或者其他复杂的类型校验还是不太友好，所以很多人也推荐大家的 props 尽量采取简单类型，不过如果你有在用 TypeScript 开发 Vue 应用，可以利用 TypeScript 静态类型检查来声明你的 props 。
 
-```js
-@Component
-export default class Hello extends Vue {
-  @Prop
-  info: IHelloInfo; // 这里可以用你自定义的 interface
-}
-```
+![为 Vue 引入容器组件和展示组件](https://user-gold-cdn.xitu.io/2018/5/3/16324780dac6da6a?w=1052&h=522&f=png&s=63765)
+
 
 ### 可测试性
 
 由于组件做的事情更少了，使得测试也会变得容易。
 
-容器组件不用关心UI的展示，只关心数据和更新。
+容器组件不用关心 UI 的展示，只关心数据和更新。
 
-展示组件只是呈现传入的props，写单元测试的时候也非常容易mock数据层。
+展示组件只是呈现传入的 props ，写单元测试的时候也非常容易 mock 数据层。
 
 
 ## 引入容器组件/展示组件模式带来的限制
@@ -455,3 +266,10 @@ export default class Hello extends Vue {
 
 欢迎 Star
 
+## 扫一扫关注迅雷前端公众号
+
+![](https://user-gold-cdn.xitu.io/2017/9/18/a61c018adbf0a3e865643c51e91251bb?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+>  **作者**：binggg
+>
+>  **校对**：珈蓝
