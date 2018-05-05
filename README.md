@@ -1,3 +1,9 @@
+# 致敬 React: 为 Vue 引入容器组件和展示组件
+
+> 首发掘金 [迅雷前端](https://juejin.im/user/599a9277f265da246c4a0cdb/posts) 专栏，原文地址：[致敬 React: 为 Vue 引入容器组件和展示组件](https://juejin.im/user/599a9277f265da246c4a0cdb/posts)
+
+![](https://user-gold-cdn.xitu.io/2018/5/3/16323acd8e3292cf?imageView2/1/w/1080/h/1000/q/85/format/webp/interlace/1)
+
 如果你使用过 Redux 开发 React，你一定听过 容器组件（Smart/Container Components） 或 展示组件（Dumb/Presentational Components），这样划分有什么样的好处，我们能否能借鉴这种划分方式来编写 Vue 代码呢？这篇文章会演示为什么我们应该采取这种模式，以及如何在 Vue 中编写这两种组件。
 
 ## 为什么要使用容器组件?
@@ -134,7 +140,15 @@ comments、fetch 等这些 props 并不关心背后是否是由 Vuex 提供的�
 
 通过 connector 的 connnect 方法，传入要映射的配置，支持 mapStateToProps, mapGettersToProps, mapDispatchToProps, mapCommitToProps 这四种，每一种都是只要配置一个简单的 map 函数，或者字符串即可。
 
-然后在返回的函数中传入要连接的展示组件，是不是非常的简洁，同时借鉴了 redux 优雅的函数式风格。
+然后在返回的函数中传入要连接的展示组件即可，是不是非常的简洁。
+
+#### 容器组件本身也可以复用
+
+由于借鉴了 redux 优雅的函数式风格， connector 的 connnect 方法 返回的函数实际上是一个高阶组件，也就是一个可以创建组件的函数。这样带来了额外的好处，不同的展示组件也可以复用同一个容器组件。
+
+举个例子：
+
+如果你写了多个版本的评论展示组件，接受的数据和更新数据的方式都是一样的，那么你就没有必要为每个版本的评论组件都搞一个容器组件了，只要复用同一个高阶组件函数即可。
 
 ##### 问题来了，connector 是什么？
 
