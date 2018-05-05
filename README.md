@@ -1,6 +1,6 @@
 # 致敬 React: 为 Vue 引入容器组件和展示组件
 
-> 首发掘金 [迅雷前端](https://juejin.im/user/599a9277f265da246c4a0cdb/posts) 专栏，原文地址：[致敬 React: 为 Vue 引入容器组件和展示组件](https://juejin.im/user/599a9277f265da246c4a0cdb/posts)
+> 首发掘金 [迅雷前端](https://juejin.im/user/599a9277f265da246c4a0cdb/posts) 专栏，原文地址：[致敬 React: 为 Vue 引入容器组件和展示组件](https://juejin.im/post/5ae9a5545188256709610635)
 
 ![](https://user-gold-cdn.xitu.io/2018/5/3/16323acd8e3292cf?imageView2/1/w/1080/h/1000/q/85/format/webp/interlace/1)
 
