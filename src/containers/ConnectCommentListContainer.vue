@@ -6,7 +6,7 @@ export default connector.connect({
   mapStateToProps: {
     comments: (state) => state.comments
   },
-  mapActionToProps: {
+  mapDispatchToProps: {
     fetch: 'fetchComments'
   }
 })(CommentListNew)
