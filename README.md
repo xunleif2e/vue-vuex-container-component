@@ -4,6 +4,7 @@
 
 ![](https://user-gold-cdn.xitu.io/2018/5/3/16323acd8e3292cf?imageView2/1/w/1080/h/1000/q/85/format/webp/interlace/1)
 
+
 如果你使用过 Redux 开发 React，你一定听过 容器组件（Smart/Container Components） 或 展示组件（Dumb/Presentational Components），这样划分有什么样的好处，我们能否能借鉴这种划分方式来编写 Vue 代码呢？这篇文章会演示为什么我们应该采取这种模式，以及如何在 Vue 中编写这两种组件。
 
 ## 为什么要使用容器组件?
@@ -135,8 +136,7 @@ comments、fetch 等这些 props 并不关心背后是否是由 Vuex 提供的�
 
 ##### comonents/ConnectCommentListContainer.vue
 
-![为 Vue 引入容器组件和展示组件](https://user-gold-cdn.xitu.io/2018/5/3/163247808324e70a?w=1160&h=810&f=png&s=113201)
-
+![为 Vue 引入容器组件和展示组件](https://user-gold-cdn.xitu.io/2018/5/30/163af255cbe97e85?w=1160&h=846&f=png&s=130594)
 
 通过 connector 的 connnect 方法，传入要映射的配置，支持 mapStateToProps, mapGettersToProps, mapDispatchToProps, mapCommitToProps 这四种，每一种都是只要配置一个简单的 map 函数，或者字符串即可。
 
